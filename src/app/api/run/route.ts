@@ -1,20 +1,19 @@
-// app/api/run/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { story } = await req.json();
+    const { subject } = await req.json();
 
-    if (!story) {
-      return NextResponse.json({ error: 'Missing story parameter' }, { status: 400 });
+    if (!subject) {
+      return NextResponse.json({ error: 'Missing subject parameter' }, { status: 400 });
     }
 
-    const workflowId = process.env.WORKFLOW_ID;
-    const apiKey = process.env.AITUTOR_API_KEY;
+    const workflowId = process.env.NEXT_PUBLIC_WORKFLOW_ID;
+    const apiKey = process.env.NEXT_PUBLIC_AITUTOR_API_KEY;
 
     if (!workflowId || !apiKey) {
       return NextResponse.json(
-        { error: 'Missing environment variables: WORKFLOW_ID or AITUTOR_API_KEY' },
+        { error: 'Missing environment variables: NEXT_PUBLIC_WORKFLOW_ID or NEXT_PUBLIC_AITUTOR_API_KEY' },
         { status: 500 }
       );
     }
@@ -25,14 +24,14 @@ export async function POST(req: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ story }),
+      body: JSON.stringify({ subject }),
     });
 
     const data = await response.json();
 
     // Check for error from the external API
     if (!response.ok) {
-        return NextResponse.json({error: data}, {status: response.status});
+        return NextResponse.json({ error: data }, { status: response.status });
     }
 
     return NextResponse.json(data, { status: 200 });
@@ -41,4 +40,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
-

@@ -1,7 +1,6 @@
-// src/app/page.tsx
 "use client";
 import { useState } from 'react';
-import StoryDisplay from '@/components/StoryDisplay';
+import PromptDisplay from '@/components/PromptDisplay';
 import StreamingChat from '@/components/StreamingChat';
 import { FaGithub, FaRobot, FaCode, FaStream, FaKey } from 'react-icons/fa';
 
@@ -11,7 +10,7 @@ interface TokenResponse {
 }
 
 export default function Home() {
-    const [story, setStory] = useState('');
+    const [subject, setSubject] = useState('');
     const [result, setResult] = useState<any>(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -21,8 +20,8 @@ export default function Home() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!story.trim()) {
-            setError('Please enter a story');
+        if (!subject.trim()) {
+            setError('Please enter a subject');
             return;
         }
         setError('');
@@ -35,7 +34,7 @@ export default function Home() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ story }),
+                body: JSON.stringify({ subject }),
             });
 
             const data = await response.json();
@@ -44,10 +43,10 @@ export default function Home() {
                 setResult(data);
                 setError('');
             } else {
-                setError(data.error || 'An error occurred while fetching the story.');
+                setError(data.error || 'An error occurred while fetching the prompt.');
             }
         } catch (err) {
-            setError('An error occurred while fetching the story.');
+            setError('An error occurred while fetching the prompt.');
         } finally {
             setLoading(false);
         }
@@ -141,7 +140,7 @@ export default function Home() {
                 <div className="text-center mb-8 p-8">
                     <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text inline-block" 
                         style={{ lineHeight: '1.5', padding: '0.5em 0' }}>
-                        AI Story Generator
+                        AI Prompt Generator
                     </h1>
                 </div>
 
@@ -150,15 +149,15 @@ export default function Home() {
                         <div className="glass-morphism p-8 mb-8 rounded-xl shadow-xl backdrop-blur-lg bg-white/30">
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="space-y-2">
-                                    <label htmlFor="story" className="block text-lg font-medium text-gray-700">
-                                        Enter your story prompt:
+                                    <label htmlFor="subject" className="block text-lg font-medium text-gray-700">
+                                        Enter your subject:
                                     </label>
                                     <input
-                                        id="story"
+                                        id="subject"
                                         type="text"
-                                        value={story}
-                                        onChange={(e) => setStory(e.target.value)}
-                                        placeholder="E.g., Tell me a story about a magical forest..."
+                                        value={subject}
+                                        onChange={(e) => setSubject(e.target.value)}
+                                        placeholder="E.g., Describe a futuristic city..."
                                         className="w-full p-4 rounded-lg bg-white/50 border border-purple-200 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent shadow-inner"
                                     />
                                 </div>
@@ -176,7 +175,7 @@ export default function Home() {
                                             Generating...
                                         </span>
                                     ) : (
-                                        'Generate Story'
+                                        'Generate Prompt'
                                     )}
                                 </button>
                             </form>
@@ -188,7 +187,7 @@ export default function Home() {
                             </div>
                         )}
 
-                        {result && <StoryDisplay result={result} />}
+                        {result && <PromptDisplay result={result} />}
                     </>
                 ) : mode === 'chat' ? (
                     <div className="glass-morphism p-8 mb-8 rounded-xl shadow-xl backdrop-blur-lg bg-white/30">
